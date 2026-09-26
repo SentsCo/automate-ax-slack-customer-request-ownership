@@ -80,8 +80,18 @@ export default automation(
 
     slack.sendMessage({
       conversation: parameters.internalChannelId,
-      text: t`Customer request assigned for follow-up. HubSpot ticket ${ticket.id}: ${request.subject}. Original message: ${source.permalink}`,
+      text: t`Customer request assigned for follow-up. HubSpot ticket ${ticket.id}: ${request.subject}. Original message: ${source.permalink}`.transform(
+        escapeSlackText,
+      ),
       unfurlLinks: false,
     })
   },
 )
+
+/** Keeps provider text from becoming Slack mentions or control markup. */
+function escapeSlackText(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
